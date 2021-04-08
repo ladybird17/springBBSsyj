@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<!-- thymeleaf를 사용하기 위하여 선언 -->
+<html lang="ko" xmln:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>게시판 전체 목록</title>
+<link rel="stylesheet" th:href="@{/css/bootstrap.css}"></link>
+<script th:src="@{/js/jquery-3.5.1.js}"></script>
+<script th:src="@{/js/popper.min.js}"></script>
+<script th:src="@{/js/bootstrap.js}"></script>
+</head>
+<body>
+	<div class="container">
+		<div class="jumbotron text-center">
+			<h2>모여봐요 동물의 숲 카페</h2>
+		</div>
+		<table class="table table-light table-hover table-striped text-center">
+			<colgroup>
+				<col width="10%" />
+				<col width="*%" />
+				<col width="10%" />
+				<col width="20%" />
+				<col width="10%" />
+				<col width="10%" />
+			</colgroup>
+			<thead>
+				<tr>
+					<th>글번호</th>
+					<th>제목</th>
+					<th>작성자</th>
+					<th>작성일</th>
+					<th>조회수</th>
+					<th>좋아요</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:if="${#lists.size(data)}>0" th:each="list : ${data}">
+					<!-- th:text 는 텍스트 출력. 시작태그와 끝태그 사이의 텍스트 입력 -->
+					<td th:text="${list.boardIdx}"></td>
+					<td><a href="/bbs/" th:attrappend="href=${list.boardIdx}" th:text="${list.title}"></a></td>
+					<td th:text="${list.writer}"></td>
+					<td th:text="${list.cDate}"></td>
+					<td th:text="${list.views}"></td>
+					<td th:text="${list.likes}"></td>
+				</tr>
+				<tr th:unless="${#lists.size(data)} > 0">
+					<td colspan="6">조회된 결과가 없습니다.</td>
+				</tr>
+			</tbody>
+		</table>
+		<a href="/bbs/bbsWrite" class="btn">글쓰기</a>
+	</div>
+</body>
+</html>

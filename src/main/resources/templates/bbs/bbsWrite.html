@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>새게시글 작성 및 등록</title>
+<link rel="stylesheet" th:href="@{/css/bootstrap.css}"></link>
+<script th:src="@{/js/jquery-3.5.1.js}"></script>
+<script th:src="@{/js/popper.min.js}"></script>
+<script th:src="@{/js/bootstrap.js}"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="jumbotron text-center">
+			<h2>모여봐요 동물의 숲 카페</h2>
+		</div>
+        <!-- enctype="multipart/form-data" 파일 업로드 데이터를 전송-->
+        <form action="/bbs/bbsWrite" id="frm" name="frm" method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="title">제목 : </label>
+                <input type="text" id="title" name="title" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="writer">작성자 : </label>
+                <input type="text" id="writer" name="writer" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="contents">내용</label>
+                <textarea id="contents" name="contents" rows="15" class="form-control">
+                </textarea>
+            </div>
+            <div class="form-group">
+            	<!--
+            	파일을 첨부할 수 있는 input 태그.
+            	multiple 속성으로 여러개의 파일 추가 가능.
+            	multiple은 html5에서만 사용 가능
+            	-->
+            	<input type="file" id="files" name="files" multiple="multiple" class="form-control-file">
+            </div>
+            <div class="d-flex justify-content-end">
+                <button type="submit" class="btn btn-primary">글 등록</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

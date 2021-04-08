@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bitc.bbssyj.mapper.BBSMapper">
+	<!-- 목록조회 -->
+	<select id="selectBBSList" resultType="com.bitc.bbssyj.dto.BBSDto">
+		<![CDATA[
+			SELECT
+				boardIdx,
+				title,
+				writer,
+				DATE_FORMAT(cDate, '%Y.%m.%d %H:%i:%s') AS cDate,
+				views,
+				likes
+			FROM
+				t_bbsboard
+			ORDER BY boardIdx DESC
+		]]>
+	</select>
+	
+	<!-- 지정한 글 조회 -->
+	<select id="selectBBSDetail" parameterType="int" resultType="com.bitc.bbssyj.dto.BBSDto">
+		<![CDATA[
+			SELECT
+				boardIdx,
+				title,
+				writer,
+				contents,
+				views,
+				DATE_FORMAT(cDate, '%Y.%m.%d %H:%i:%s') AS cDate
+			FROM
+				t_bbsboard
+			WHERE
+				boardIdx = #{boardIdx}
+		]]>
+	</select>
+	
+	<!-- 조회수 높이기 -->
+	<update id="updateViews" parameterType="int">
+		<![CDATA[
+			UPDATE
+				t_bbsboard
+			SET
+				views = views + 1
+			WHERE
+				boardIdx = #{boardIdx}
+		]]>
+	</update>
+	
+	<!-- 글 삽입하기 -->
+	<insert id="insertBBS" parameterType="com.bitc.bbssyj.dto.BBSDto" useGeneratedKeys="true" keyProperty="boardIdx">
+		<![CDATA[
+			INSERT INTO t_bbsboard
+				(title, contents, writer, cDate)
+			VALUES
+				(#{title}, #{contents}, #{writer}, NOW())
+		]]>
+	</insert>
+	
+	<!-- 파일 정보 추가하기 -->
+	<insert id="insertBBSFileList" parameterType="com.bitc.bbssyj.dto.BBSFileDto">
+		<![CDATA[
+			INSERT INTO t_bbsfile
+				(boardIdx, original_file_name, stored_file_path, file_size, writer, cDate)
+			VALUES
+		]]>
+		<!-- 업로드된 파일은 여러개이기 때문에 mybatis의 foreach문을 사용하여 반복 수행함 -->
+		<!-- collection 속성은 mapper에서 넘겨받은 데이터 타입을 입력(데이터 타입은 List, array 임) -->
+		<!-- item 속성은 foreach 문 내에서 사용할 매개변수의 별칭 -->
+		<!-- separator 속성은 반복되는 문자열을 구분하기 위해 사용 -->
+		<foreach collection="list" item="item" separator=",">
+			(
+				#{item.boardIdx},
+				#{item.originalFileName},
+				#{item.storedFilePath},
+				#{item.fileSize},
+				'admin',
+				NOW()
+			)
+		</foreach>
+	</insert>
+	
+	<!-- 파일 목록 확인하기 -->
+	<select id="selectBBSFileList" parameterType="int" resultType="com.bitc.bbssyj.dto.BBSFileDto">
+		<![CDATA[
+			SELECT
+				idx, boardIdx, original_file_name,
+				FORMAT(ROUND(file_size / 1024), 0) AS file_size
+			FROM
+				t_bbsfile
+			WHERE
+				boardIdx = #{boardIdx}
+		]]>
+	</select>
+	
+	<!-- 게시글 수정하기 -->
+	<update id="updateBBS" parameterType="com.bitc.bbssyj.dto.BBSDto">
+		<![CDATA[
+			UPDATE
+				t_bbsboard
+			SET
+				title = #{title}, contents = #{contents}
+			WHERE
+				boardIdx = #{boardIdx}
+		]]>
+	</update>
+	
+	<delete id="deleteBBS" parameterType="int">
+		<![CDATA[ 
+			DELETE
+			FROM
+				t_bbsboard
+			WHERE
+				boardIdx = #{boardIdx}
+		]]>
+	</delete>
+	
+	<!-- 파일 정보 가져오기. -->
+	<select id="selectBBSFileInformation" parameterType="map" resultType="com.bitc.bbssyj.dto.BBSFileDto">
+		<![CDATA[
+			SELECT 
+				original_file_name, stored_file_path, file_size
+			FROM
+				t_bbsfile
+			WHERE 
+				idx = #{idx}
+			AND boardIdx = #{boardIdx}
+		]]>
+	</select>
+</mapper>
+
+
+
+
+
+
+
+

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thypeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>지정한 글 보기</title>
+
+<link rel="stylesheet" th:href="@{/css/bootstrap.css}"></link>
+<script th:src="@{/js/jquery-3.5.1.js}"></script>
+<script th:src="@{/js/popper.min.js}"></script>
+<script th:src="@{/js/bootstrap.js}"></script>
+
+<script>
+	$(document).ready(function(){
+		var boardIdx = $("#boardIdx").val();
+		
+		//전체 목록으로 이동
+		$("#btnList").on("click",function(){
+			//자바스크립트의 location을 사용하여 페이지 이동
+			location.href = "/bbs/";
+		});
+		
+		//게시글 수정 버튼
+		$("#btnEdit").on("click",function(){
+			$("#method").val("PUT");
+			var frm = $("#frm")[0];
+			frm.action = "/bbs/"+boardIdx;
+			frm.submit();
+		});
+		
+		//게시글 삭제 버튼
+		$("#btnDel").on("click",function(){
+			$("#method").val("DELETE");
+			var frm = $("#frm")[0];
+			frm.action = "/bbs/"+boardIdx;
+			frm.submit();
+		});
+	});
+	</script>
+</head>
+<body>
+	<div class="container">
+		<div class="jumbotron text-center">
+			<h2>모여봐요 동물의 숲 카페</h2>
+		</div>
+		<form id="frm" method="POST">
+			<table class="table table-light">
+				<tbody>
+					<tr>
+						<td>
+							<input type="text" id="title" name="title" th:value="${bbs.title}" class="form-control text-center">
+						</td>
+					</tr>
+					<tr class="d-flex justify-content-center">
+						<td>작성자</td>
+						<td th:text="${bbs.writer}"></td>
+						<td>작성일</td>
+						<td th:text="${bbs.cDate}"></td>
+						<td>조회수</td>
+						<td th:text="${bbs.views}"></td>
+					</tr>
+					<tr>
+						<td class="mx-auto">
+							<textarea title="내용" id="contents" name="contents" th:text="${bbs.contents}" class="form-control" rows="15"></textarea>
+						</td>
+					</tr>
+				</tbody>
+				<tfoot>
+					<tr>
+						<td colspan="4">
+						<!--
+						href 속성을 통해서 해당 주소로 이동한다.
+						(파라미터명=파라미터값, 파라미터명=파라미터값)을 사용하면
+						2개 이상의 파라미터를 서버로 전송 가능함
+						-->
+							<a th:each="list : ${bbs.fileList}" th:href="@{/bbs/file(idx=${list.idx}, boardIdx=${list.boardIdx})}" th:text="|${list.originalFileName} (${list.fileSize} kb)|"></a>
+						</td>
+					</tr>
+				</tfoot>
+			</table>
+			<!-- 화면에는 보이지 않고 서버에는 전송되는 데이터 -->
+			<input type="hidden" id="boardIdx" name="boardIdx" th:value="${bbs.boardIdx}"/>
+			<input type="hidden" id="method" name="_method"/>
+			<div class="d-flex flex-rows justify-content-end">
+				<button type="button" class="btn btn-primary" id="btnList">목록으로</button>
+				<button type="button" class="btn btn-success ml-2" id="btnEdit">수정하기</button>
+				<button type="button" class="btn btn-danger ml-2" id="btnDel">삭제하기</button>
+			</div>
+		</form>
+	</div>
+</body>
+</html>
